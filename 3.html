@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>SM4 加解密示例</title>
+</head>
+<body>
+    <h2>SM4 ECB 加密/解密示例</h2>
+    <label>密钥（16字节）：</label>
+    <input type="text" id="key" value="CatsPK0WWWRRhjkw" size="20" /><br/><br/>
+
+    <label>明文输入：</label>
+    <input type="text" id="plaintext" size="30" />
+    <button onclick="encrypt()">加密</button><br/><br/>
+
+    <label>密文输出 (Base64)：</label>
+    <textarea id="ciphertext" rows="3" cols="50"></textarea><br/>
+    <button onclick="decrypt()">解密</button><br/><br/>
+
+    <label>解密结果：</label>
+    <textarea id="decrypted" rows="3" cols="50"></textarea>
+
+    <!-- 引入 sm-crypto -->
+    <script src="https://cdn.jsdelivr.net/npm/sm-crypto@0.4.6/dist/sm-crypto.min.js"></script>
+    <script>
+        const { sm4 } = window.smCrypto;
+
+        function encrypt() {
+            const key = document.getElementById("key").value;
+            const plaintext = document.getElementById("plaintext").value;
+
+            try {
+                // ECB 模式，输出 base64
+                const ciphertext = sm4.encrypt(plaintext, key, {
+                    mode: 'ecb',
+                    padding: 'pkcs#7',
+                    output: 'base64'
+                });
+                document.getElementById("ciphertext").value = ciphertext;
+                document.getElementById("decrypted").value = '';
+            } catch (e) {
+                alert("加密错误：" + e.message);
+            }
+        }
+
+        function decrypt() {
+            const key = document.getElementById("key").value;
+            const ciphertext = document.getElementById("ciphertext").value;
+
+            try {
+                const decrypted = sm4.decrypt(ciphertext, key, {
+                    mode: 'ecb',
+                    padding: 'pkcs#7',
+                    input: 'base64'
+                });
+                document.getElementById("decrypted").value = decrypted;
+            } catch (e) {
+                alert("解密错误：" + e.message);
+            }
+        }
+    </script>
+</body>
+</html>
